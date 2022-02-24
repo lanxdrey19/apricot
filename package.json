@@ -1,0 +1,27 @@
+{
+  "name": "apricot",
+  "version": "1.0.0",
+  "description": "description to be added soon",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lanxdrey19/apricot.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/lanxdrey19/apricot/issues"
+  },
+  "homepage": "https://github.com/lanxdrey19/apricot#readme",
+  "dependencies": {
+    "@discordjs/builders": "^0.11.0",
+    "@discordjs/rest": "^0.3.0",
+    "discord-api-types": "^0.26.1",
+    "discord.js": "^13.6.0",
+    "dotenv": "^16.0.0"
+  }
+}
