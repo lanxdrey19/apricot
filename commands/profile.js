@@ -12,10 +12,12 @@ module.exports = {
   async execute(interaction) {
     const user = interaction.options.getUser("user");
     if (user) {
-      await interaction.reply(`Username: ${user.username}\nuser blurb here`);
+      await interaction.reply(
+        `Username: ${user.username}\nuser blurb here\nyour ult here`
+      );
     } else {
       await interaction.reply(
-        `Your username: ${interaction.user.username}\nmy blurb here`
+        `Your username: ${interaction.user.username}\nmy blurb here\nyour ult here`
       );
     }
   },
