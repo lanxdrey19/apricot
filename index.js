@@ -1,6 +1,7 @@
 const fs = require("fs");
 const { Client, Collection, Intents } = require("discord.js");
-const { token } = require("./config.json");
+const { token, dbConnection } = require("./config.json");
+const mongoose = require("mongoose");
 
 const client = new Client({ intents: [Intents.FLAGS.GUILDS] });
 
@@ -13,6 +14,9 @@ for (const file of commandFiles) {
   const command = require(`./commands/${file}`);
   client.commands.set(command.data.name, command);
 }
+mongoose.connect(dbConnection, () => {
+  console.log("Connection to db established");
+});
 
 client.once("ready", () => {
   console.log("Ready!");
