@@ -1,4 +1,6 @@
 const { SlashCommandBuilder } = require("@discordjs/builders");
+const userInteractor = require("../use_cases/user_interactor");
+const userController = require("../controllers/user_controller");
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -13,11 +15,33 @@ module.exports = {
   async execute(interaction) {
     const user = interaction.options.getUser("user");
     if (user) {
-      await interaction.reply(`${user.username}'s cards:\n card1 card2 card3`);
+      try {
+        const result = await userInteractor.executeGetUser(
+          userController,
+          user.id.toString()
+        );
+        await interaction.reply(`Tags for ${user.username}:\n${result.tags}`);
+      } catch (error) {
+        await interaction.reply({
+          content: `This user has not registered in the game\nTo register they must use the command **/user start**.`,
+          ephemeral: true,
+        });
+      }
     } else {
-      await interaction.reply(
-        `${interaction.user.username}'s cards:\n card1 card2 card3`
-      );
+      try {
+        const result = await userInteractor.executeGetUser(
+          userController,
+          interaction.user.id.toString()
+        );
+        await interaction.reply(
+          `Tags for ${interaction.user.username}:\n${result.tags}`
+        );
+      } catch (error) {
+        await interaction.reply({
+          content: `You have not registered in the game\nTo register you must use the command **/user start**.`,
+          ephemeral: true,
+        });
+      }
     }
   },
 };

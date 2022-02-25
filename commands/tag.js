@@ -1,4 +1,6 @@
 const { SlashCommandBuilder } = require("@discordjs/builders");
+const tagInteractor = require("../use_cases/tag_interactor");
+const tagController = require("../controllers/tag_controller");
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -51,13 +53,59 @@ module.exports = {
     ),
   async execute(interaction) {
     const tagName = interaction.options.getString("tag-name");
-    const tagEmote = interaction.options.getString("tag-emote");
+
     if (interaction.options.getSubcommand() === "add") {
-      await interaction.reply(`Created successfully:\n${tagName} ${tagEmote}`);
+      const tagEmote = interaction.options.getString("tag-emote");
+      try {
+        let requestBody = {
+          userId: interaction.user.id.toString(),
+          tagName: tagName,
+          tagEmote: tagEmote,
+        };
+        await tagInteractor.executeAddTag(tagController, requestBody);
+        await interaction.reply(
+          `The tag was created successfully:\n${tagName.toLowerCase()} ${tagEmote.toLowerCase()}`
+        );
+      } catch (error) {
+        await interaction.reply({
+          content: `You have not registered in the game\nTo register you must use the command **/user start**.\nOr you have already have a tag with this tag name`,
+          ephemeral: true,
+        });
+      }
     } else if (interaction.options.getSubcommand() === "update") {
-      await interaction.reply(`Updated successfully:\n${tagName} ${tagEmote}`);
+      const tagEmote = interaction.options.getString("tag-emote");
+      try {
+        let requestBody = {
+          userId: interaction.user.id.toString(),
+          tagName: tagName,
+          tagEmote: tagEmote,
+        };
+        await tagInteractor.executeUpdateUserTag(tagController, requestBody);
+        await interaction.reply(
+          `The tag was updated successfully:\n${tagName.toLowerCase()} ${tagEmote.toLowerCase()}`
+        );
+      } catch (error) {
+        await interaction.reply({
+          content: `You have not registered in the game\nTo register you must use the command **/user start**.\nOr dont currently have the tag you want to update`,
+          ephemeral: true,
+        });
+      }
     } else if (interaction.options.getSubcommand() === "delete") {
-      await interaction.reply(`Deleted successfully:\n${tagName} :some_emote:`);
+      try {
+        let requestBody = {
+          userId: interaction.user.id.toString(),
+          tagName: tagName,
+        };
+        await tagInteractor.executeDeleteTag(tagController, requestBody);
+        await interaction.reply(
+          `The tag was deleted successfully:\n${tagName.toLowerCase()}`
+        );
+      } catch (error) {
+        await interaction.reply({
+          content: `You have not registered in the game\nTo register you must use the command **/user start**.\nOr dont currently have the tag you want to delete`,
+          ephemeral: true,
+        });
+      }
     }
   },
 };
