@@ -1,4 +1,8 @@
 const { SlashCommandBuilder } = require("@discordjs/builders");
+const userInteractor = require("../use_cases/user_interactor");
+const userController = require("../controllers/user_controller");
+const blurbInteractor = require("../use_cases/blurb_interactor");
+const blurbController = require("../controllers/blurb_controller");
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -19,7 +23,21 @@ module.exports = {
   async execute(interaction) {
     const description = interaction.options.getString("blurb-description");
     if (interaction.options.getSubcommand() === "set") {
-      await interaction.reply(`Blurb update successfully to:\n${description}`);
+      try {
+        await blurbInteractor.executeUpdateBlurb(
+          blurbController,
+          interaction.user.id.toString(),
+          description
+        );
+        await interaction.reply(
+          `Blurb update successfully to:\n${description}`
+        );
+      } catch (error) {
+        await interaction.reply({
+          content: `You have not registered in the game\nTo register you must use the command **/user start**.`,
+          ephemeral: true,
+        });
+      }
     }
   },
 };

@@ -17,7 +17,11 @@ const findUser = async function (userIdentifier) {
     const user = await User.findOne({
       userId: userIdentifier,
     });
-    return user;
+    if (user) {
+      return user;
+    } else {
+      throw new Error("the user could not be found");
+    }
   } catch (err) {
     throw new Error("the user could not be retrieved");
   }
