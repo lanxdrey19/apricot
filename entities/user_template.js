@@ -4,41 +4,8 @@ const userTemplate = {
     required: true,
   },
   ultimate: {
-    type: {
-      name: {
-        type: String,
-        required: true,
-      },
-      group: {
-        type: String,
-        required: true,
-      },
-      era: {
-        type: String,
-        required: true,
-      },
-      photo: {
-        type: String,
-        required: true,
-      },
-      logo: {
-        type: String,
-        required: true,
-      },
-      recordedSerial: {
-        type: String,
-        required: true,
-      },
-      stars: {
-        type: Number,
-        required: true,
-      },
-      tagName: {
-        type: String,
-        default: "",
-      },
-    },
-    default: {},
+    type: {},
+    default: null,
   },
   cards: {
     type: [
