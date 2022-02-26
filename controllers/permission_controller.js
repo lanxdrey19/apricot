@@ -7,7 +7,7 @@ const checkPermissions = async function (
   adminRights,
   permissions
 ) {
-  return await permissionDAO.checkPermissions(
+  await permissionDAO.checkPermissions(
     serverId,
     userId,
     adminRights,

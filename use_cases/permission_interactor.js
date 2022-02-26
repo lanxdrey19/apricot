@@ -5,7 +5,7 @@ const executeCheckPermissions = async function (
   adminRights,
   permissions
 ) {
-  return await permissionController.checkPermissions(
+  await permissionController.checkPermissions(
     serverId,
     userId,
     adminRights,
