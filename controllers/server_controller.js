@@ -1,21 +1,17 @@
 const Server = require("../entities/Server");
 const serverDAO = require("../daos/server_dao");
 
-const getServer = async function (serverId) {
-  return await serverDAO.findServer(serverId);
+const getServer = async function (requestBody) {
+  return await serverDAO.findServer(requestBody);
 };
 const createServer = async function (requestBody) {
-  duplicateServerRecord = await serverDAO.findServer(requestBody.serverId);
-
-  if (!requestBody.isAllowed) {
-    throw new Error("the server record could not be created");
-  } else if (duplicateServerRecord.length !== 0) {
-    throw new Error("A record has already been created");
+  const duplicateServerRecord = await serverDAO.findServer(requestBody);
+  if (duplicateServerRecord) {
+    throw new Error(
+      "The server has already been set up. Set up the drop channel using /dropchannel set"
+    );
   } else {
-    const server = new Server({
-      serverId: requestBody.serverId,
-    });
-    return await serverDAO.postServer(server);
+    await serverDAO.postServer(requestBody);
   }
 };
 const updateDropChannel = async function (serverId, requestBody) {

@@ -1,9 +1,9 @@
-const executeGetServer = async function (serverController, serverId) {
-  return await serverController.getServer(serverId);
+const executeGetServer = async function (serverController, requestBody) {
+  return await serverController.getServer(requestBody);
 };
 
 const executeCreateServer = async function (serverController, requestBody) {
-  return await serverController.createServer(requestBody);
+  await serverController.createServer(requestBody);
 };
 
 const executeUpdateDropChannel = async function (

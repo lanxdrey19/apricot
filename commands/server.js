@@ -1,5 +1,13 @@
-const { SlashCommandBuilder } = require("@discordjs/builders");
+const {
+  SlashCommandBuilder,
+  userMention,
+  memberNicknameMention,
+  channelMention,
+  roleMention,
+} = require("@discordjs/builders");
 const { Permissions } = require("discord.js");
+const permissionInteractor = require("../use_cases/permission_interactor");
+const permissionController = require("../controllers/permission_controller");
 const serverInteractor = require("../use_cases/server_interactor");
 const serverController = require("../controllers/server_controller");
 
@@ -23,13 +31,16 @@ module.exports = {
   async execute(interaction) {
     if (interaction.options.getSubcommand() === "setup") {
       try {
+        await permissionInteractor.executeCheckPermissions(
+          permissionController,
+          interaction.guild.id.toString(),
+          interaction.user.id,
+          interaction.member.permissions.has(Permissions.FLAGS.ADMINISTRATOR),
+          [0, 0, 0, 1]
+        );
         let requestBody = {
           serverId: interaction.guild.id.toString(),
-          isAllowed: interaction.member.permissions.has(
-            Permissions.FLAGS.ADMINISTRATOR
-          ),
         };
-
         await serverInteractor.executeCreateServer(
           serverController,
           requestBody
@@ -39,32 +50,41 @@ module.exports = {
         );
       } catch (error) {
         await interaction.reply({
-          content:
-            "An error occurred. You must be an administrator to execute this command or this command has already been executed by the administrator",
+          content: `${error.message}`,
           ephemeral: true,
         });
       }
     } else if (interaction.options.getSubcommand() === "info") {
       try {
-        const result = await serverInteractor.executeGetServer(
-          serverController,
-          interaction.guild.id.toString()
-        );
-        let dropChannel;
-        result.dropChannel
-          ? (dropChannel = result.dropChannel)
-          : (dropChannel = "**not set**");
-        await interaction.reply(
-          `Info for: ${
-            interaction.guild.name
-          }\nDrop channel: ${interaction.guild.channels.cache.get(dropChannel)}`
+        await permissionInteractor.executeCheckPermissions(
+          permissionController,
+          interaction.guild.id.toString(),
+          interaction.user.id,
+          interaction.member.permissions.has(Permissions.FLAGS.ADMINISTRATOR),
+          [0, 0, 0, 1]
         );
       } catch (error) {
         await interaction.reply({
-          content: "An error occurred. Please try again later...",
+          content: `${error.message}`,
           ephemeral: true,
         });
       }
+      let requestBody = {
+        serverId: interaction.guild.id.toString(),
+      };
+      const server = await serverInteractor.executeGetServer(
+        serverController,
+        requestBody
+      );
+      let dropChannel;
+      server.dropChannel
+        ? (dropChannel = server.dropChannel)
+        : (dropChannel = "**not set**");
+      await interaction.reply(
+        `Info for: ${interaction.guild.name}\nDrop channel: ${channelMention(
+          dropChannel
+        )}`
+      );
     }
   },
 };

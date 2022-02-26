@@ -1,9 +1,9 @@
 const Server = require("../entities/Server");
 
-const findServer = async function (serverIdentifier) {
+const findServer = async function (requestBody) {
   try {
     const server = await Server.findOne({
-      serverId: serverIdentifier,
+      serverId: requestBody.serverId,
     });
     return server;
   } catch (err) {
@@ -11,10 +11,12 @@ const findServer = async function (serverIdentifier) {
   }
 };
 
-const postServer = async function (server) {
+const postServer = async function (requestBody) {
   try {
-    const savedServer = await server.save();
-    return savedServer;
+    const server = new Server({
+      serverId: requestBody.serverId,
+    });
+    await server.save();
   } catch (err) {
     throw new Error("the server record could not be created");
   }
