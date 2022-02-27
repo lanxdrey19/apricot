@@ -1,6 +1,9 @@
 const { SlashCommandBuilder } = require("@discordjs/builders");
-const userInteractor = require("../use_cases/user_interactor");
-const userController = require("../controllers/user_controller");
+const { Permissions } = require("discord.js");
+const permissionInteractor = require("../use_cases/permission_interactor");
+const permissionController = require("../controllers/permission_controller");
+const profileInteractor = require("../use_cases/profile_interactor");
+const profileController = require("../controllers/profile_controller");
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -13,36 +16,32 @@ module.exports = {
     ),
   async execute(interaction) {
     const user = interaction.options.getUser("user");
-    if (user) {
-      try {
-        const result = await userInteractor.executeGetUser(
-          userController,
-          user.id.toString()
-        );
-        await interaction.reply(
-          `Your username: ${user.username}\nBlurb: ${result.blurb}\nUlt: ${result.ultimate}\nTags: ${result.tags}\nTokens: ${result.tokens}`
-        );
-      } catch (error) {
-        await interaction.reply({
-          content: `This user has not registered in the game\nTo register they must use the command **/user start**.`,
-          ephemeral: true,
-        });
-      }
-    } else {
-      try {
-        const result = await userInteractor.executeGetUser(
-          userController,
-          interaction.user.id.toString()
-        );
-        await interaction.reply(
-          `Your username: ${interaction.user.username}\nBlurb: ${result.blurb}\nUlt: ${result.ultimate}\nTags: ${result.tags}\nTokens: ${result.tokens}`
-        );
-      } catch (error) {
-        await interaction.reply({
-          content: `You have not registered in the game\nTo register you must use the command **/user start**.`,
-          ephemeral: true,
-        });
-      }
+    let finalUser;
+    try {
+      user ? (finalUser = user) : (finalUser = interaction.user);
+
+      await permissionInteractor.executeCheckPermissions(
+        permissionController,
+        interaction.guild.id.toString(),
+        finalUser.id,
+        interaction.member.permissions.has(Permissions.FLAGS.ADMINISTRATOR),
+        [0, 0, 0, 1]
+      );
+      let requestBody = {
+        userId: finalUser.id.toString(),
+      };
+      const userRetrieved = await profileInteractor.executeGetUserProfile(
+        profileController,
+        requestBody
+      );
+      await interaction.reply(
+        `Your username: ${finalUser.username}\nBlurb: ${userRetrieved.blurb}\nUlt: ${userRetrieved.ultimate}\nTags: ${userRetrieved.tags}\nTokens: ${userRetrieved.tokens}`
+      );
+    } catch (error) {
+      await interaction.reply({
+        content: `${error.message}`,
+        ephemeral: true,
+      });
     }
   },
 };
