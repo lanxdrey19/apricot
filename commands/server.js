@@ -61,7 +61,7 @@ module.exports = {
           interaction.guild.id.toString(),
           interaction.user.id,
           interaction.member.permissions.has(Permissions.FLAGS.ADMINISTRATOR),
-          [0, 0, 0, 1]
+          [1, 0, 0, 0]
         );
       } catch (error) {
         await interaction.reply({
