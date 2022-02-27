@@ -24,7 +24,7 @@ const checkPermissions = async function (
       });
       if (!user) {
         throw new Error(
-          "Error, the user with this user is not registered, you must register using /user start"
+          "Error, the user specified is not registered, you must register using /user start"
         );
       }
     }
