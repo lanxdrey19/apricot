@@ -14,18 +14,8 @@ const createServer = async function (requestBody) {
     await serverDAO.postServer(requestBody);
   }
 };
-const updateDropChannel = async function (serverId, requestBody) {
-  if (!requestBody.isAllowed) {
-    throw new Error("the server's drop channel cannot be updated");
-  }
-  return await serverDAO.putServerDropChannel(
-    serverId,
-    requestBody.newDropChannel
-  );
-};
 
 module.exports = {
   getServer,
   createServer,
-  updateDropChannel,
 };

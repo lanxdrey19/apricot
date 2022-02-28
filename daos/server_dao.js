@@ -22,20 +22,7 @@ const postServer = async function (requestBody) {
   }
 };
 
-const putServerDropChannel = async function (serverIdentifier, newDropChannel) {
-  try {
-    const updatedServer = await Server.updateOne(
-      { serverId: serverIdentifier },
-      { $set: { dropChannel: newDropChannel } }
-    );
-    return updatedServer;
-  } catch (err) {
-    throw new Error("the server's drop channel could not be updated");
-  }
-};
-
 module.exports = {
   findServer,
   postServer,
-  putServerDropChannel,
 };
