@@ -1,7 +1,9 @@
 const { SlashCommandBuilder } = require("@discordjs/builders");
 const { Permissions } = require("discord.js");
-const serverInteractor = require("../use_cases/server_interactor");
-const serverController = require("../controllers/server_controller");
+const permissionInteractor = require("../use_cases/permission_interactor");
+const permissionController = require("../controllers/permission_controller");
+const dropChannelInteractor = require("../use_cases/dropchannel_interactor");
+const dropChannelController = require("../controllers/dropchannel_controller");
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -23,23 +25,26 @@ module.exports = {
     const dropChannel = interaction.options.getChannel("channel");
     if (interaction.options.getSubcommand() === "set") {
       try {
+        await permissionInteractor.executeCheckPermissions(
+          permissionController,
+          interaction.guild.id.toString(),
+          interaction.user.id,
+          interaction.member.permissions.has(Permissions.FLAGS.ADMINISTRATOR),
+          [1, 0, 0, 1]
+        );
         let requestBody = {
+          serverId: interaction.guild.id.toString(),
           newDropChannel: dropChannel,
-          isAllowed: interaction.member.permissions.has(
-            Permissions.FLAGS.ADMINISTRATOR
-          ),
         };
 
-        await serverInteractor.executeUpdateDropChannel(
-          serverController,
-          interaction.guild.id.toString(),
+        await dropChannelInteractor.executeUpdateDropChannel(
+          dropChannelController,
           requestBody
         );
         await interaction.reply(`Drop channel set to:\n${dropChannel}`);
       } catch (error) {
         await interaction.reply({
-          content:
-            "An error occurred. Only administrators can update the drop channel for the server",
+          content: `${error.message}`,
           ephemeral: true,
         });
       }
