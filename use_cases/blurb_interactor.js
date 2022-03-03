@@ -1,9 +1,5 @@
-const executeUpdateBlurb = async function (
-  blurbController,
-  userId,
-  description
-) {
-  await blurbController.updateBlurb(userId, description);
+const executeUpdateBlurb = async function (blurbController, requestBody) {
+  await blurbController.updateBlurb(requestBody);
 };
 
 module.exports = {

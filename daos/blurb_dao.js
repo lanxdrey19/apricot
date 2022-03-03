@@ -1,16 +1,13 @@
 const User = require("../entities/User");
 
-const setBlurb = async function (userIdentifier, description) {
+const setBlurb = async function (requestBody) {
   try {
-    console.log("hey");
-    const result = await User.updateOne(
-      { userId: userIdentifier },
-      { $set: { blurb: description } }
+    await User.updateOne(
+      { userId: requestBody.userId },
+      { $set: { blurb: requestBody.description } }
     );
-    console.log(result);
-    console.log("yea");
   } catch (err) {
-    throw new Error("the blurb could not be set");
+    throw new Error("server error occurred");
   }
 };
 
