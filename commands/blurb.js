@@ -1,6 +1,7 @@
 const { SlashCommandBuilder } = require("@discordjs/builders");
-const userInteractor = require("../use_cases/user_interactor");
-const userController = require("../controllers/user_controller");
+const { Permissions } = require("discord.js");
+const permissionInteractor = require("../use_cases/permission_interactor");
+const permissionController = require("../controllers/permission_controller");
 const blurbInteractor = require("../use_cases/blurb_interactor");
 const blurbController = require("../controllers/blurb_controller");
 
@@ -24,17 +25,26 @@ module.exports = {
     const description = interaction.options.getString("blurb-description");
     if (interaction.options.getSubcommand() === "set") {
       try {
-        await blurbInteractor.executeUpdateBlurb(
-          blurbController,
-          interaction.user.id.toString(),
-          description
+        await permissionInteractor.executeCheckPermissions(
+          permissionController,
+          interaction.guild.id.toString(),
+          interaction.user.id,
+          interaction.member.permissions.has(Permissions.FLAGS.ADMINISTRATOR),
+          [0, 0, 1, 0]
         );
+
+        let requestBody = {
+          userId: interaction.user.id.toString(),
+          description: description,
+        };
+
+        await blurbInteractor.executeUpdateBlurb(blurbController, requestBody);
         await interaction.reply(
           `Blurb update successfully to:\n${description}`
         );
       } catch (error) {
         await interaction.reply({
-          content: `You have not registered in the game\nTo register you must use the command **/user start**.`,
+          content: `${error.message}`,
           ephemeral: true,
         });
       }
