@@ -1,12 +1,7 @@
-const executeCreateUser = async function (userController, userId) {
-  return await userController.createUser(userId);
-};
-
-const executeGetUser = async function (userController, userId) {
-  return await userController.getUser(userId);
+const executeCreateUser = async function (userController, requestBody) {
+  return await userController.createUser(requestBody);
 };
 
 module.exports = {
   executeCreateUser,
-  executeGetUser,
 };
