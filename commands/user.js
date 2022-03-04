@@ -15,16 +15,16 @@ module.exports = {
   async execute(interaction) {
     if (interaction.options.getSubcommand() === "start") {
       try {
-        await userInteractor.executeCreateUser(
-          userController,
-          interaction.user.id.toString()
-        );
+        let requestBody = {
+          userId: interaction.user.id.toString(),
+        };
+        await userInteractor.executeCreateUser(userController, requestBody);
         await interaction.reply(
           `Welcome ${interaction.user.username}!\nYou may now start.\nGo to /help if you need help`
         );
       } catch (error) {
         await interaction.reply({
-          content: `Error: You have already started the game.`,
+          content: `${error.message}`,
           ephemeral: true,
         });
       }
