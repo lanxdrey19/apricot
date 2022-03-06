@@ -1,4 +1,7 @@
 const { SlashCommandBuilder } = require("@discordjs/builders");
+const { Permissions } = require("discord.js");
+const permissionInteractor = require("../use_cases/permission_interactor");
+const permissionController = require("../controllers/permission_controller");
 const tagInteractor = require("../use_cases/tag_interactor");
 const tagController = require("../controllers/tag_controller");
 
@@ -57,6 +60,13 @@ module.exports = {
     if (interaction.options.getSubcommand() === "add") {
       const tagEmote = interaction.options.getString("tag-emote");
       try {
+        await permissionInteractor.executeCheckPermissions(
+          permissionController,
+          interaction.guild.id.toString(),
+          interaction.user.id,
+          interaction.member.permissions.has(Permissions.FLAGS.ADMINISTRATOR),
+          [0, 0, 1, 0]
+        );
         let requestBody = {
           userId: interaction.user.id.toString(),
           tagName: tagName,
@@ -68,13 +78,20 @@ module.exports = {
         );
       } catch (error) {
         await interaction.reply({
-          content: `You have not registered in the game\nTo register you must use the command **/user start**.\nOr you have already have a tag with this tag name`,
+          content: `${error.message}`,
           ephemeral: true,
         });
       }
     } else if (interaction.options.getSubcommand() === "update") {
       const tagEmote = interaction.options.getString("tag-emote");
       try {
+        await permissionInteractor.executeCheckPermissions(
+          permissionController,
+          interaction.guild.id.toString(),
+          interaction.user.id,
+          interaction.member.permissions.has(Permissions.FLAGS.ADMINISTRATOR),
+          [0, 0, 1, 0]
+        );
         let requestBody = {
           userId: interaction.user.id.toString(),
           tagName: tagName,
@@ -86,12 +103,19 @@ module.exports = {
         );
       } catch (error) {
         await interaction.reply({
-          content: `You have not registered in the game\nTo register you must use the command **/user start**.\nOr dont currently have the tag you want to update`,
+          content: `${error.message}`,
           ephemeral: true,
         });
       }
     } else if (interaction.options.getSubcommand() === "delete") {
       try {
+        await permissionInteractor.executeCheckPermissions(
+          permissionController,
+          interaction.guild.id.toString(),
+          interaction.user.id,
+          interaction.member.permissions.has(Permissions.FLAGS.ADMINISTRATOR),
+          [0, 0, 1, 0]
+        );
         let requestBody = {
           userId: interaction.user.id.toString(),
           tagName: tagName,
@@ -102,7 +126,7 @@ module.exports = {
         );
       } catch (error) {
         await interaction.reply({
-          content: `You have not registered in the game\nTo register you must use the command **/user start**.\nOr dont currently have the tag you want to delete`,
+          content: `${error.message}`,
           ephemeral: true,
         });
       }
