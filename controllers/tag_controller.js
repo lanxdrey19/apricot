@@ -6,15 +6,15 @@ const getTags = async function (userId) {
 };
 
 const addTag = async function (requestBody) {
-  return await tagDAO.addTagForUser(requestBody);
+  await tagDAO.addTagForUser(requestBody);
 };
 
 const deleteTag = async function (requestBody) {
-  return await tagDAO.deleteTagForUser(requestBody);
+  await tagDAO.deleteTagForUser(requestBody);
 };
 
 const updateUserTag = async function (requestBody) {
-  return await tagDAO.updateTagForUser(requestBody);
+  await tagDAO.updateTagForUser(requestBody);
 };
 
 const tagUserCard = async function (requestBody) {

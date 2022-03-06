@@ -28,11 +28,10 @@ const addTagForUser = async function (requestBody) {
         tagName: requestBody.tagName.toString().toLowerCase(),
         tagEmote: requestBody.tagEmote.toString().toLowerCase(),
       };
-      const updatedUser = await User.updateOne(
+      await User.updateOne(
         { userId: requestBody.userId },
         { $push: { tags: tag } }
       );
-      return updatedUser;
     } else {
       throw new Error("Tag already exists");
     }
@@ -62,11 +61,10 @@ const deleteTagForUser = async function (requestBody) {
         tagName: finalTagName,
         tagEmote: finalTagEmote,
       };
-      const updatedUser = await User.updateOne(
+      await User.updateOne(
         { userId: requestBody.userId },
         { $pull: { tags: tag } }
       );
-      return updatedUser;
     } else {
       throw new Error("Tag could not be found");
     }
@@ -92,7 +90,7 @@ const updateTagForUser = async function (requestBody) {
       }
     });
     if (isValid) {
-      const updatedUser = await User.updateOne(
+      await User.updateOne(
         { userId: requestBody.userId, "tags.tagName": finalTagName },
         {
           $set: {
@@ -100,7 +98,6 @@ const updateTagForUser = async function (requestBody) {
           },
         }
       );
-      return updatedUser;
     } else {
       throw new Error("Tag could not be found");
     }
